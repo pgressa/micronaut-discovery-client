@@ -86,7 +86,7 @@ class MockConsulServer implements ConsulOperations {
                 folder = key.substring(0, i)
             }
             List<KeyValue> list = keyvalues.computeIfAbsent(folder, { String k -> []})
-            list.add(new KeyValue(key, Base64.getEncoder().encodeToString(value.bytes)))
+            list.add(new KeyValue(key, Base64.getEncoder().encodeToString(value.bytes), 0L))
         }
         return Flowable.just(true)
     }
@@ -120,6 +120,14 @@ class MockConsulServer implements ConsulOperations {
     Flowable<List<KeyValue>> readValues(String key,
                                     @Nullable @QueryValue("dc") String datacenter,
                                     @Nullable Boolean raw, @Nullable String seperator) {
+        return readValues(key)
+    }
+
+    @Override
+    Publisher<List<KeyValue>> readValues(String key,
+                                         @Nullable @QueryValue("dc") String datacenter,
+                                         @Nullable Boolean raw, @Nullable String seperator,
+                                         @Nullable String wait, @Nullable Long index) {
         return readValues(key)
     }
 

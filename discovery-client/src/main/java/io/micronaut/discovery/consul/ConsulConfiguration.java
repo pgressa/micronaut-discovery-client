@@ -17,6 +17,7 @@ package io.micronaut.discovery.consul;
 
 import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.core.util.Toggleable;
 import io.micronaut.discovery.DiscoveryConfiguration;
 import io.micronaut.discovery.client.DiscoveryClientConfiguration;
@@ -58,6 +59,7 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
     private ConsulRegistrationConfiguration registration = new ConsulRegistrationConfiguration();
     private ConsulDiscoveryConfiguration discovery = new ConsulDiscoveryConfiguration();
     private ConsulConfigDiscoveryConfiguration configuration = new ConsulConfigDiscoveryConfiguration();
+    private ConsulWatchesConfiguration watches = new ConsulWatchesConfiguration();
 
     /**
      * Default Consult configuration.
@@ -168,6 +170,19 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
         }
     }
 
+
+    public ConsulWatchesConfiguration getWatches() {
+        return watches;
+    }
+
+    /**
+     * @param watches The {@link ConsulWatchesConfiguration}
+     */
+    @Inject
+    public void setWatches(ConsulWatchesConfiguration watches) {
+        this.watches = watches;
+    }
+
     /**
      * @return The serviceID
      */
@@ -182,6 +197,7 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
             "aslToken='" + aslToken + '\'' +
             ", registration=" + registration +
             ", discovery=" + discovery +
+            ", watches=" + watches +
             "} " + super.toString();
     }
 
@@ -561,4 +577,51 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
         }
     }
 
+    /**
+     * Configuration class for Consul watches.
+     */
+    // TODO: use constant
+    @ConfigurationProperties("watcher")
+    @BootstrapContextCompatible
+    public static class ConsulWatchesConfiguration implements Toggleable {
+
+        /**
+         * The prefix to use for all Consul client registration settings.
+         */
+        public static final String PREFIX = ConsulConfiguration.PREFIX + "." + "watcher";
+
+        public static final String ENABLED = PREFIX + "." + "enabled";
+
+        /**
+         * The default enable value.
+         */
+        @SuppressWarnings("WeakerAccess")
+        public static final boolean DEFAULT_ENABLED = false;
+
+        private boolean enabled = DEFAULT_ENABLED;
+
+        /**
+         * @return Whether the watches module is enabled
+         */
+        @Override
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        /**
+         * Default value ({@value #DEFAULT_ENABLED}).
+         *
+         * @param enabled Whether the check module is enabled
+         */
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        @Override
+        public String toString() {
+            return "ConsulWatchesConfiguration{" +
+                    "enabled=" + enabled +
+                    "}";
+        }
+    }
 }

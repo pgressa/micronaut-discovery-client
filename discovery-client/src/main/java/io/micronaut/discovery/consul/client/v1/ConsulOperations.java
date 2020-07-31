@@ -53,6 +53,7 @@ public interface ConsulOperations {
      * @param key The key to read
      * @return A {@link Publisher} that emits a list of {@link KeyValue}
      */
+    // @TODO - should we mark this one as deprecated as well or somehow rename it like it doesn't contains retries
     @Get(uri = "/kv/{+key}?recurse", single = true)
     Publisher<List<KeyValue>> readValues(String key);
 
@@ -75,6 +76,26 @@ public interface ConsulOperations {
         @Nullable @QueryValue("dc") String datacenter,
         @Nullable Boolean raw,
         @Nullable String seperator);
+
+    /**
+     * Reads a Key from Consul. See https://www.consul.io/api/kv.html.
+     *
+     * @param key        The key
+     * @param datacenter The data center
+     * @param raw        Whether the value should be raw without encoding or metadata
+     * @param seperator  The separator to use
+     * @param wait  The wait timeout in case of using blocking query. See https://www.consul.io/api/features/blocking.
+     * @param index  The index indicating that the client wishes to wait for any changes subsequent to that index. See https://www.consul.io/api/features/blocking.
+     * @return A {@link Publisher} that emits a list of {@link KeyValue}
+     */
+    @Get(uri = "/kv/{+key}?recurse=true{&dc}{&raw}{&seperator}{&wait}{&index}", single = true)
+    Publisher<List<KeyValue>> readValues(
+            String key,
+            @Nullable @QueryValue("dc") String datacenter,
+            @Nullable Boolean raw,
+            @Nullable String seperator,
+            @Nullable String wait,
+            @Nullable Long index);
 
     /**
      * Pass the TTL check. See https://www.consul.io/api/agent/check.html.

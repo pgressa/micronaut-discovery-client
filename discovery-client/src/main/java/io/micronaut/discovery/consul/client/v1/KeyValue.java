@@ -32,15 +32,17 @@ import io.micronaut.core.annotation.Introspected;
 public class KeyValue {
     private String key;
     private String value;
+    private Long modifyIndex;
 
     /**
      * @param key   The key
      * @param value The value
      */
     @JsonCreator
-    public KeyValue(@JsonProperty("Key") String key, @JsonProperty("Value") String value) {
+    public KeyValue(@JsonProperty("Key") String key, @JsonProperty("Value") String value, @JsonProperty("ModifyIndex") Long modifyIndex) {
         this.key = key;
         this.value = value;
+        this.modifyIndex = modifyIndex;
     }
 
     /**
@@ -55,5 +57,9 @@ public class KeyValue {
      */
     public String getValue() {
         return value;
+    }
+
+    public Long getModifyIndex() {
+        return modifyIndex;
     }
 }
